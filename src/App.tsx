@@ -18,7 +18,6 @@ const App: React.FC = () => {
 	});
 
 	const updateProgress = (file: string, current_progress: number): void => {
-
 		if (current_progress < 100) {
 			setState((state) => {
 				const newItems = { ...state };
@@ -44,7 +43,7 @@ const App: React.FC = () => {
 				newActiveFile = [...newActiveFile, newFile];
 				newItems["progress"] = newProgress;
 				newItems["activeList"] = newActiveFile;
-				if (newItems["selectFile"].url === "") {
+				if (newItems["selectFile"] && newItems["selectFile"].url === "") {
 					newItems["selectFile"] = newFile;
 				}
 
@@ -121,7 +120,15 @@ const App: React.FC = () => {
 
 	const addNewFile = (file: any, uploadComponent: any) => {
 		return new Promise((resolve, reject) => {
-			state.progress = [...state.progress, { value: 0, file: file }];
+			let newProgress: any = [];
+			const name = file?.name?.slice(-4);
+			if (name === ".mp4") {
+				newProgress = [...newProgress, { value: 0, file: file }]
+			}
+			if (newProgress.length === 0) {
+				alert("No File Selectedd!!!");
+			}
+			state.progress = [...state.progress, ...newProgress];
 			state.uploadComponent = [...state.uploadComponent, uploadComponent];
 			setState({ ...state, ["progress"]: state.progress, ["uploadComponent"]: state.uploadComponent });
 
@@ -132,13 +139,15 @@ const App: React.FC = () => {
 	return (
 		<div className='app'>
 			{
-				state.selectFile.file !== "" && <VideoViewer
+				state?.selectFile?.file !== "" && <VideoViewer
 					currentSelectedFile={state.selectFile}
 					removeShowingSelectedFile={removeShowingSelectedFile} />
 			}
 
 			<FileUploadWrapper
 				progress={state.progress}
+				selectFile={state.selectFile}
+				activeList={state.activeList}
 				selectCurrentFile={selectCurrentFile}
 				updateProgress={updateProgress}
 				removeFile={removeFile}

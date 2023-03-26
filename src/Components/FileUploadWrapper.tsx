@@ -1,6 +1,7 @@
 import React from 'react'
 import UploadComponent from './UploadComponent';
-import UploadingComponent from './Util_Components/UploadingComponent';
+import UploadingComponent from './UploadingComponent';
+import "../App.css"
 
 interface IPROPS {
 	updateProgress: any;
@@ -8,11 +9,13 @@ interface IPROPS {
 	addNewFile: any;
 	progress: any;
 	selectCurrentFile: any;
+	activeList: any;
+	selectFile: any
 };
 
 const FileUploadWrapper: React.FC<IPROPS> = (props: any) => {
 	return (
-		<>
+		<div className="uploadWrapper">
 			<UploadComponent
 				updateProgress={props.updateProgress}
 				removeFile={props.removeFile}
@@ -27,10 +30,11 @@ const FileUploadWrapper: React.FC<IPROPS> = (props: any) => {
 						progressDetails={progDetails}
 						removeFile={props.removeFile}
 						selectCurrentFile={props.selectCurrentFile}
+						selectFile={props.selectFile}
 					/>
 				);
 			})}
-		</>
+		</div>
 	)
 }
 
