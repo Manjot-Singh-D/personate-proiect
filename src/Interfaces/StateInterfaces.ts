@@ -15,4 +15,5 @@ export interface ISTATE {
 	activeList: IActiveFile[];
 	selectFile: IActiveFile;
 	uploadFile: IFile;
+	uploadComponent:any;
 };

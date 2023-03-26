@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { isDoStatement } from 'typescript';
 import './App.css';
 import FileUploadWrapper from './Components/FileUploadWrapper';
 import UploadComponent from './Components/UploadComponent';
+import VideoViewer from './Components/VideoViewer';
 import { ISTATE } from "./Interfaces/StateInterfaces";
 
 
@@ -12,69 +14,116 @@ const App: React.FC = () => {
 		activeList: [],
 		selectFile: { file: "", url: "" },
 		uploadFile: { file: "" },
+		uploadComponent: []
 	});
 
 	const updateProgress = (file: string, current_progress: number): void => {
+
+		if (current_progress < 100) {
+			setState((state) => {
+				const newItems = { ...state };
+				const newProgress = [...newItems.progress];
+				const index = newProgress.findIndex(item => item.file.name === file);
+
+				newProgress[index] = { ...newProgress[index], value: current_progress };
+				newItems["progress"] = newProgress;
+
+				return newItems;
+			})
+		}
+		else if (current_progress === 100) {
+			const url = `${process.env.REACT_APP_OBJECT_URL}${file}`;
+			setState((state) => {
+				const newItems = { ...state };
+				const newProgress = [...newItems.progress];
+				let newActiveFile = [...newItems.activeList];
+				const index = newProgress.findIndex(item => item.file.name === file);
+
+				const newFile = { file: newProgress[index].file, url: url };
+				newProgress[index] = { ...newProgress[index], value: current_progress };
+				newActiveFile = [...newActiveFile, newFile];
+				newItems["progress"] = newProgress;
+				newItems["activeList"] = newActiveFile;
+				if (newItems["selectFile"].url === "") {
+					newItems["selectFile"] = newFile;
+				}
+
+				return newItems;
+			})
+		}
+	}
+
+
+	const selectCurrentFile = (file: any) => {
 		setState((state) => {
 			const newItems = { ...state };
-			const newProgress = [...newItems.progress];
-			const index = newProgress.findIndex(item => item.file.name === file);
+			const newSelect = [...state.activeList];
+			const index = newSelect.findIndex(item => item.file === file);
 
-			newProgress[index] = { ...newProgress[index], value: current_progress };
-			newItems["progress"] = newProgress;
-
+			try {
+				newItems["selectFile"] = newSelect[index];
+			}
+			catch (err) {
+				console.log(err);
+			}
 			return newItems;
 		})
 	}
-	const addToActiveFile = (file: any, url: string): void => {
-		const newActiveFile = { file: file, url: url };
-		setState({ ...state, ["activeList"]: [...state["activeList"], newActiveFile] });
-	}
-	const setUploadFile = (file: any): void => {
-		setState({ ...state, ["uploadFile"]: { file: file } });
-	}
+
+
 	const removeFile = (file: any): void => {
-		// Remove File From Progress
-		const newProgress = state.progress.filter((prog) => {
-			return prog.file !== file;
-		});
-		setState({ ...state, ["progress"]: newProgress });
+		setState((state) => {
+			let newState = { ...state };
+			let newProgress = [...state.progress];
+			let newActiveList = [...state.activeList];
+			let newSelectFile = { ...state.selectFile };
+			let newUploadFile = { ...state.uploadFile };
 
-		// Remove File from uploadList
-		if (state.uploadFile === file) {
-			setState({ ...state, ["uploadFile"]: { file: "" } });
-		}
+			newProgress = newProgress.filter((prog) => {
+				return prog.file !== file;
+			})
+			newActiveList = newActiveList.filter((prog) => {
+				return prog.file !== file;
+			})
+			if (newSelectFile.file === file) {
+				newSelectFile = { file: "", url: "" };
+			}
+			if (newUploadFile.file === file) {
+				newUploadFile = { file: "" };
+			}
+			state.uploadComponent.length > 0 && state.uploadComponent.map((uc: any) => {
+				if (uc.params.Body === file) {
+					uc.abort();
+					return;
+				}
+			})
+			state.uploadComponent = state.uploadComponent.filter((uc: any) => {
+				return (uc.params.Body !== file);
+			})
 
-		// Remove File from SelectFile
-		if (state.selectFile === file) {
-			setState({ ...state, ["selectFile"]: { file: "", url: "" } });
-		}
+			newState["progress"] = newProgress;
+			newState["activeList"] = newActiveList;
+			newState["selectFile"] = newSelectFile;
+			newState["uploadFile"] = newUploadFile;
+			newState["uploadComponent"] = state.uploadComponent;
 
-		// Remove File from activeList
-		const newActiveList = state.activeList.filter((active) => {
-			return active.file !== file;
+			return newState;
 		})
-		setState({ ...state, ["activeList"]: newActiveList });
 	}
-	// const addNewFile = async (file: any) => {
-	// 	const newFile = { value: 0, file: file }
 
-	// 	await console.log("BEFORE CONVERTING : ", state.progress.length);
-	// 	await setState({ ...state, ["progress"]: [...state.progress, newFile] });
-	// 	await console.log("AFTER CONVERTING : ", state.progress.length);
-	// 	await setState({ ...state, ["uploadFile"]: file });
-	// }
 
-	// const addFile=(file:any)=>{
-	// 	return new Promise((resolve,reject)=>{
-	// 		setState({...});
-	// 	});
-	// }
 
-	const addNewFile = (file: any) => {
+	const removeShowingSelectedFile = () => {
+		setState({ ...state, ["selectFile"]: { file: "", url: "" } });
+	}
+
+
+
+	const addNewFile = (file: any, uploadComponent: any) => {
 		return new Promise((resolve, reject) => {
 			state.progress = [...state.progress, { value: 0, file: file }];
-			setState({ ...state, ["progress"]: state.progress });
+			state.uploadComponent = [...state.uploadComponent, uploadComponent];
+			setState({ ...state, ["progress"]: state.progress, ["uploadComponent"]: state.uploadComponent });
 
 			resolve("DONE!!");
 		});
@@ -82,7 +131,18 @@ const App: React.FC = () => {
 
 	return (
 		<div className='app'>
-			<FileUploadWrapper progress={state.progress} updateProgress={updateProgress} addToActiveFile={addToActiveFile} setUploadFile={setUploadFile} removeFile={removeFile} addNewFile={addNewFile} />
+			{
+				state.selectFile.file !== "" && <VideoViewer
+					currentSelectedFile={state.selectFile}
+					removeShowingSelectedFile={removeShowingSelectedFile} />
+			}
+
+			<FileUploadWrapper
+				progress={state.progress}
+				selectCurrentFile={selectCurrentFile}
+				updateProgress={updateProgress}
+				removeFile={removeFile}
+				addNewFile={addNewFile} />
 		</div>
 	);
 }

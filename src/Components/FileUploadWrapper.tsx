@@ -4,24 +4,21 @@ import UploadingComponent from './Util_Components/UploadingComponent';
 
 interface IPROPS {
 	updateProgress: any;
-	addToActiveFile: any;
-	setUploadFile: any;
 	removeFile: any;
 	addNewFile: any;
-	progress: any
+	progress: any;
+	selectCurrentFile: any;
 };
 
 const FileUploadWrapper: React.FC<IPROPS> = (props: any) => {
-	// console.log("WRAPPER : ", props.progress);
 	return (
 		<>
 			<UploadComponent
 				updateProgress={props.updateProgress}
-				addToActiveFile={props.addToActiveFile}
-				setUploadFile={props.setUploadFile}
 				removeFile={props.removeFile}
 				addNewFile={props.addNewFile}
-				progress={props.progress} />
+				progress={props.progress}
+				abortProgress={props.abortProgress} />
 
 			{props.progress.map((progDetails: any, idx: number) => {
 				return (
@@ -29,6 +26,7 @@ const FileUploadWrapper: React.FC<IPROPS> = (props: any) => {
 						key={idx}
 						progressDetails={progDetails}
 						removeFile={props.removeFile}
+						selectCurrentFile={props.selectCurrentFile}
 					/>
 				);
 			})}
