@@ -8,12 +8,11 @@ interface IPROPS {
 };
 
 const VideoViewer: React.FC<IPROPS> = (props) => {
-  // console.log(props.currentSelectedFile);
   return (
-    <div style={{ position: "relative" }}>
+    <div className='videoWrapper' style={{ position: "relative" }}>
       {
         props.currentSelectedFile && props.currentSelectedFile.url !== "" &&
-        <video width="450" height="300" style={{ margin: "1rem" }} controls key={props.currentSelectedFile.file.name} >
+        <video style={{ width: "450px", height: "auto", margin: "1rem" }} controls key={props.currentSelectedFile.file.name} >
           <source src={props.currentSelectedFile.url} type="video/mp4" />
         </video>
       }

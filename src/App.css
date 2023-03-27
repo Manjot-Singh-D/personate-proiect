@@ -1,6 +1,6 @@
 h1,h2,h3,h4,h5,p,span{
     color: #2B2D2F;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important; */
 }
 .app{
     display: flex;
@@ -34,6 +34,7 @@ video{
     padding: 1rem 0.5rem 0.75rem 0.5rem;
     margin: 1rem;
     border-radius: 10px;
+    cursor: pointer;
 }
 .playIcon{
     color: #1976d2;
@@ -42,6 +43,7 @@ video{
     align-items: center;
     margin-top: auto;
     margin-bottom: auto;
+    cursor: pointer;
 }
 .cancelIcon{
     position: absolute; 
@@ -57,4 +59,113 @@ video{
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+
+.dropContainer{
+    width: 80%;
+    height: 14rem;
+    display: flex;
+    border: 1px dashed rgb(0, 0, 0);
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+}
+
+.uploadBtn{
+    background-color: #1976d2;
+    padding: 1rem;
+    border-radius: 6px;
+    color: #ffffff;
+    /* font-family: sans-serif; */
+    box-shadow: 15px 16px 32px 14px #1976d240;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    
+    margin: 2rem 0rem;
+}
+.dropSection{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.videoWrapper{
+    position: relative;
+}
+
+@media screen and (max-width:870px){
+    .uploadWrapper,.videoWrapper{
+        transform: scale(0.9);
+    }
+    .uploadWrapper{
+        transform: translateY(-2rem);
+    }
+    .uploadingContainerText,.uploadingContainerPerc,.uploadBtn, .dropSection p{
+        font-size: 0.9rem !important;
+    }
+    .uploadingContainerTextArea{
+        transform: translateX(-15px);
+    }
+    .playIcon{
+        transform: scale(0.8);
+        min-width: 1rem !important;
+        margin: auto 5px;
+    }
+    .progressContainer{
+        transform:translateY(10px)
+    }
+}
+
+@media screen and (max-width:600px){
+    .uploadWrapper,.videoWrapper{
+        transform: scale(0.7);
+    }
+    .uploadWrapper{
+        width: 90%;
+        transform: translateY(-2rem);
+    }
+    .uploadingContainerText,.uploadingContainerPerc,.uploadBtn, .dropSection p{
+        font-size: 0.8rem !important;
+    }
+    .uploadingContainerTextArea{
+        transform: translateX(-15px);
+    }
+    .playIcon{
+        transform: scale(0.8);
+        min-width: 1rem !important;
+        margin: auto 5px;
+    }
+    .progressContainer{
+        transform:translateY(10px)
+    }
+}
+
+@media screen and (max-width:450px){
+    .uploadWrapper,.videoWrapper{
+        transform: scale(0.6);
+    }
+    .uploadWrapper{
+        width: 90%;
+        transform: translateY(-2rem);
+    }
+    .uploadingContainerText,.uploadingContainerPerc,.uploadBtn, .dropSection p{
+        font-size: 0.7rem !important;
+    }
+    .uploadingContainerTextArea{
+        transform: translateX(-15px);
+    }
+    .playIcon{
+        transform: scale(0.8);
+        min-width: 1rem !important;
+        margin: auto 5px;
+    }
+    .progressContainer{
+        transform:translateY(10px)
+    }
 }

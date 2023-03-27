@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { isDoStatement } from 'typescript';
+import React, { useState } from 'react';
 import './App.css';
 import FileUploadWrapper from './Components/FileUploadWrapper';
-import UploadComponent from './Components/UploadComponent';
 import VideoViewer from './Components/VideoViewer';
 import { ISTATE } from "./Interfaces/StateInterfaces";
+import BackgroundParticles from './Components/BackgroundParticles';
 
 
 
@@ -23,8 +22,14 @@ const App: React.FC = () => {
 				const newItems = { ...state };
 				const newProgress = [...newItems.progress];
 				const index = newProgress.findIndex(item => item.file.name === file);
+				const newFile = newProgress[index].file;
 
-				newProgress[index] = { ...newProgress[index], value: current_progress };
+				newProgress.map((prog, idx) => {
+					if (prog.value < 100 && prog.file === newFile) {
+						newProgress[idx].value = current_progress;
+					}
+					return prog;
+				})
 				newItems["progress"] = newProgress;
 
 				return newItems;
@@ -38,7 +43,7 @@ const App: React.FC = () => {
 				let newActiveFile = [...newItems.activeList];
 				const index = newProgress.findIndex(item => item.file.name === file);
 
-				const newFile = { file: newProgress[index].file, url: url };
+				const newFile = { file: newProgress[index]?.file, url: url };
 				newProgress[index] = { ...newProgress[index], value: current_progress };
 				newActiveFile = [...newActiveFile, newFile];
 				newItems["progress"] = newProgress;
@@ -95,6 +100,7 @@ const App: React.FC = () => {
 					uc.abort();
 					return;
 				}
+				return uc;
 			})
 			state.uploadComponent = state.uploadComponent.filter((uc: any) => {
 				return (uc.params.Body !== file);
@@ -125,19 +131,26 @@ const App: React.FC = () => {
 			if (name === ".mp4") {
 				newProgress = [...newProgress, { value: 0, file: file }]
 			}
-			if (newProgress.length === 0) {
-				alert("No File Selectedd!!!");
-			}
-			state.progress = [...state.progress, ...newProgress];
-			state.uploadComponent = [...state.uploadComponent, uploadComponent];
-			setState({ ...state, ["progress"]: state.progress, ["uploadComponent"]: state.uploadComponent });
 
+			const index = state.progress.findIndex((item) => {
+				return item.file.name === file.name && item.file.size === file.size;
+			});
+			if (index === -1) {
+
+				state.progress = [...state.progress, ...newProgress];
+				state.uploadComponent = [...state.uploadComponent, uploadComponent];
+				setState({ ...state, ["progress"]: state.progress, ["uploadComponent"]: state.uploadComponent });
+			}
+			else {
+				alert("Already Available");
+			}
 			resolve("DONE!!");
 		});
 	}
 
 	return (
 		<div className='app'>
+			<BackgroundParticles />
 			{
 				state?.selectFile?.file !== "" && <VideoViewer
 					currentSelectedFile={state.selectFile}
@@ -151,7 +164,8 @@ const App: React.FC = () => {
 				selectCurrentFile={selectCurrentFile}
 				updateProgress={updateProgress}
 				removeFile={removeFile}
-				addNewFile={addNewFile} />
+				addNewFile={addNewFile}
+				removeShowingSelectedFile={removeShowingSelectedFile} />
 		</div>
 	);
 }

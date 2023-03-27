@@ -10,7 +10,8 @@ interface IPROPS {
 	progress: any;
 	selectCurrentFile: any;
 	activeList: any;
-	selectFile: any
+	selectFile: any;
+	removeShowingSelectedFile: any;
 };
 
 const FileUploadWrapper: React.FC<IPROPS> = (props: any) => {
@@ -31,6 +32,7 @@ const FileUploadWrapper: React.FC<IPROPS> = (props: any) => {
 						removeFile={props.removeFile}
 						selectCurrentFile={props.selectCurrentFile}
 						selectFile={props.selectFile}
+						removeShowingSelectedFile={props.removeShowingSelectedFile}
 					/>
 				);
 			})}
