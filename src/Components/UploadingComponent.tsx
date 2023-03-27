@@ -44,7 +44,7 @@ const UploadingComponent: React.FC<IPROPS> = (props: any) => {
                 secondary={
                     <React.Fragment>
                         <div className='uploadingContainerText' style={{ fontWeight: "700", fontSize: "1rem", position: "relative" }}>
-                            <span style={{ transform: "translateY(-5px)", position: "absolute" }}>
+                            <span style={{ transform: "translateY(-5px)" }}>
                                 {props.progressDetails.file.name}
                             </span>
 
