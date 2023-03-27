@@ -67,7 +67,7 @@ const UploadComponent: React.FC<IPROPS> = (props: any) => {
                         <div className='dropSection' {...getRootProps()}>
                             <input {...getInputProps()} />
                             <div className='dropSection'>
-                                <h1 style={{ textAlign: "center" }}>You can Upload Video</h1>
+                                <h1 style={{ textAlign: "center" }}>You can Upload Single/Multiple .mp4 Videos</h1>
                                 <p style={{ textAlign: "center", textTransform: "uppercase" }}>Click on the button or Drag & Drop Files here</p>
                             </div>
                         </div>
